@@ -685,13 +685,12 @@ body {
 }
 
 /* ========== Android (Capacitor native app) ========== */
+/* Force mobile layout - WebView may report desktop viewport */
 .platform-android {
-  /* Force mobile layout - Android app is always phone-sized */
   --viewport-height: 100dvh;
 }
 
 .platform-android body {
-  /* Full viewport on Android WebView */
   width: 100%;
 }
 
@@ -700,46 +699,11 @@ body {
   min-height: -webkit-fill-available;
 }
 
-/* Hide "Download Android app" when already in the Android app */
 .platform-android .android-download-wrap {
   display: none !important;
 }
 
-/* Android: ensure full-height layouts work with system UI */
-.platform-android .notes-layout {
-  min-height: 100dvh;
-  min-height: -webkit-fill-available;
-}
-
-.platform-android .notes-content {
-  flex: 1;
-  min-height: 0;
-}
-
-.platform-android .notes-main {
-  min-height: 0;
-  flex: 1;
-}
-
-.platform-android .note-editor {
-  min-height: 0;
-}
-
-.platform-android .note-editor-content {
-  /* Allow editor to shrink when keyboard opens */
-  min-height: 150px;
-}
-
-/* Android: improve touch feedback, remove tap highlight */
-.platform-android .btn,
-.platform-android .note-list-item,
-.platform-android .android-download,
-.platform-android .notes-back-btn {
-  -webkit-tap-highlight-color: transparent;
-  touch-action: manipulation;
-}
-
-/* Android: auth page fills viewport */
+/* Auth pages - mobile layout */
 .platform-android .auth-page {
   min-height: 100dvh;
   min-height: -webkit-fill-available;
@@ -748,4 +712,145 @@ body {
 
 .platform-android .auth-card {
   max-width: 100%;
+  padding: 1.5rem;
+}
+
+.platform-android .auth-card h1 {
+  font-size: 1.5rem;
+}
+
+.platform-android .auth-form input {
+  font-size: 16px;
+}
+
+/* Notes header - mobile layout */
+.platform-android .notes-header {
+  padding: 0.75rem 1rem;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.platform-android .notes-header h1 {
+  font-size: 1.1rem;
+  flex: 1;
+}
+
+.platform-android .notes-back-btn,
+.platform-android .notes-back-btn.mobile-only {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: var(--radius);
+  color: var(--text-secondary);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.platform-android .notes-back-btn:hover {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+}
+
+.platform-android .notes-back-btn svg {
+  width: 24px;
+  height: 24px;
+}
+
+.platform-android .header-actions {
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.platform-android .header-actions .btn {
+  padding: 0.5rem 0.875rem;
+  font-size: 0.875rem;
+  min-height: 44px;
+}
+
+/* Notes layout - mobile list/editor toggle (same as smartphone) */
+.platform-android .notes-layout {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+.platform-android .notes-content {
+  flex-direction: column !important;
+  flex: 1;
+  min-height: 0;
+}
+
+.platform-android .notes-content .notes-sidebar {
+  width: 100% !important;
+  min-width: 100% !important;
+  border-right: none !important;
+  border-bottom: 1px solid var(--border);
+}
+
+.platform-android .notes-content .notes-main {
+  min-height: 50vh;
+  min-height: 0;
+  flex: 1;
+}
+
+.platform-android .notes-content.show-editor .notes-sidebar {
+  display: none !important;
+}
+
+.platform-android .notes-content:not(.show-editor) .notes-main {
+  display: none !important;
+}
+
+/* Note list - touch-friendly */
+.platform-android .note-list-item {
+  padding: 1rem;
+  min-height: 56px;
+}
+
+/* Note editor */
+.platform-android .note-editor {
+  padding: 1rem;
+  min-height: 0;
+}
+
+.platform-android .note-editor-header {
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.platform-android .note-editor-title {
+  font-size: 1.25rem;
+  width: 100%;
+}
+
+.platform-android .note-editor-actions .btn {
+  min-height: 44px;
+}
+
+.platform-android .note-editor-content {
+  min-height: 150px;
+  font-size: 16px;
+}
+
+.platform-android .notes-empty {
+  min-height: 200px;
+  padding: 2rem 1rem;
+}
+
+.platform-android .loading-screen {
+  padding: 1rem;
+}
+
+.platform-android .btn,
+.platform-android .note-list-item,
+.platform-android .android-download,
+.platform-android .notes-back-btn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
 }

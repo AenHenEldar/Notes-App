@@ -83,6 +83,22 @@ The app is configured for Android via Capacitor.
 npm run open:android
 ```
 
+### Live reload (see CSS changes without rebuilding)
+
+1. Get your machine's IP: run `ipconfig` (Windows) and note your IPv4 address (e.g. `192.168.1.100`). For Android emulator, use `10.0.2.2`.
+2. Start the dev server in one terminal:
+   ```bash
+   npm run dev
+   ```
+3. In another terminal, set the live reload URL and run the app:
+   ```bash
+   set CAPACITOR_LIVE_RELOAD=http://YOUR_IP:5173
+   npx cap sync android
+   npx cap run android
+   ```
+   (PowerShell: `$env:CAPACITOR_LIVE_RELOAD="http://YOUR_IP:5173"`)
+4. The Android app loads from your dev server — CSS changes appear immediately. Before building for production, run `npx cap sync android` without the env var.
+
 ### Generate release APK/AAB for Google Play
 
 In Android Studio: **Build** → **Generate Signed Bundle / APK** → choose **Android App Bundle** (AAB) for Play Store submission.
