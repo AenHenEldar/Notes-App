@@ -405,3 +405,185 @@ body {
   font-size: 0.9rem;
   max-width: 400px;
 }
+
+/* Back button - hidden on desktop */
+.notes-back-btn {
+  display: none;
+}
+
+/* ========== Responsive: Smartphones ========== */
+@media (max-width: 768px) {
+  /* Auth pages */
+  .auth-page {
+    padding: 1rem;
+  }
+
+  .auth-card {
+    padding: 1.5rem;
+  }
+
+  .auth-card h1 {
+    font-size: 1.5rem;
+  }
+
+  /* Notes header */
+  .notes-header {
+    padding: 0.75rem 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .notes-header h1 {
+    font-size: 1.1rem;
+    flex: 1;
+  }
+
+  .notes-back-btn,
+  .notes-back-btn.mobile-only {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    border-radius: var(--radius);
+    color: var(--text-secondary);
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .notes-back-btn:hover {
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+  }
+
+  .notes-back-btn svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .header-actions {
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .header-actions .btn {
+    padding: 0.5rem 0.875rem;
+    font-size: 0.875rem;
+    min-height: 44px;
+  }
+
+  .android-download {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+    min-height: 44px;
+  }
+
+  /* Notes layout - mobile list/editor toggle */
+  .notes-content {
+    flex-direction: column;
+  }
+
+  .notes-content .notes-sidebar {
+    width: 100%;
+    min-width: 100%;
+    max-height: none;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .notes-content .notes-main {
+    min-height: 50vh;
+  }
+
+  .notes-content.show-editor .notes-sidebar {
+    display: none;
+  }
+
+  .notes-content:not(.show-editor) .notes-main {
+    display: none;
+  }
+
+  /* Note list - touch-friendly */
+  .note-list-item {
+    padding: 1rem;
+    min-height: 56px;
+  }
+
+  /* Note editor */
+  .note-editor {
+    padding: 1rem;
+  }
+
+  .note-editor-header {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .note-editor-title {
+    font-size: 1.25rem;
+    width: 100%;
+  }
+
+  .note-editor-actions {
+    flex-wrap: wrap;
+  }
+
+  .note-editor-actions .btn {
+    min-height: 44px;
+  }
+
+  .note-editor-content {
+    min-height: 250px;
+    font-size: 16px; /* Prevents zoom on iOS when focusing */
+  }
+
+  .auth-form input {
+    font-size: 16px; /* Prevents zoom on iOS when focusing */
+  }
+
+  /* Empty state */
+  .notes-empty {
+    min-height: 200px;
+    padding: 2rem 1rem;
+  }
+
+  /* Loading */
+  .loading-screen {
+    padding: 1rem;
+  }
+}
+
+/* ========== Responsive: Small phones ========== */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 1.25rem;
+  }
+
+  .notes-header {
+    padding: 0.625rem 0.75rem;
+  }
+
+  .android-download {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.75rem;
+  }
+}
+
+/* Touch-friendly: ensure minimum tap targets */
+@media (pointer: coarse) {
+  .btn,
+  .note-list-item,
+  .auth-form input,
+  .android-download {
+    min-height: 44px;
+  }
+
+  .btn-sm {
+    min-height: 40px;
+  }
+}

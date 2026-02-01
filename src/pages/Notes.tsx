@@ -68,9 +68,27 @@ export function Notes() {
     );
   }
 
+  const showEditor = isCreating || !!selectedNote;
+
+  function handleBackToList() {
+    setIsCreating(false);
+    setSelectedNote(null);
+  }
+
   return (
     <div className="notes-layout">
       <header className="notes-header">
+        {showEditor && (
+          <button
+            onClick={handleBackToList}
+            className="notes-back-btn mobile-only"
+            aria-label="Back to notes list"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M19 12H5M12 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
         <h1>Notes</h1>
         <div className="header-actions">
           <AndroidDownload />
@@ -83,7 +101,7 @@ export function Notes() {
         </div>
       </header>
 
-      <div className="notes-content">
+      <div className={`notes-content ${showEditor ? 'show-editor' : ''}`}>
         <aside className="notes-sidebar">
           <NoteList
             notes={notes}
