@@ -91,10 +91,18 @@ In Android Studio: **Build** → **Generate Signed Bundle / APK** → choose **A
 
 To enable the "Download Android app" button on the website:
 
+**Option A – Host APK in the project**
 1. Build a release APK in Android Studio: **Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**
 2. Copy the APK from `android/app/build/outputs/apk/release/app-release-unsigned.apk` (or the signed APK path)
 3. Rename it to `notes-app.apk` and place it in the `public/` folder
-4. Rebuild and deploy the web app — the button will serve the APK at `/notes-app.apk`
+4. Rebuild and deploy the web app
+
+**Option B – Host APK externally (e.g. GitHub Releases)**
+1. Build the APK and upload it to [GitHub Releases](https://docs.github.com/en/repositories/releasing-projects-on-github)
+2. Add `VITE_APK_DOWNLOAD_URL` to your `.env` with the direct download URL (e.g. `https://github.com/user/repo/releases/download/v1.0/notes-app.apk`)
+3. Rebuild and deploy
+
+If the APK is missing, the button shows a helpful error message instead of a 404.
 
 ## Tech Stack
 

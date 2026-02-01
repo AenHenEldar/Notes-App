@@ -118,15 +118,25 @@ body {
 }
 
 /* Android download button */
+.android-download-wrap {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.25rem;
+}
+
 .android-download {
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
+  font-family: inherit;
   color: var(--text-secondary);
-  text-decoration: none;
+  background: none;
+  border: none;
   border-radius: var(--radius);
+  cursor: pointer;
   transition: all 0.15s ease;
 }
 
@@ -138,6 +148,14 @@ body {
 .android-download-icon {
   width: 20px;
   height: 20px;
+}
+
+.android-download-error {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  max-width: 220px;
+  line-height: 1.3;
 }
 
 /* Buttons */
