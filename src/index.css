@@ -20,8 +20,21 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport - adapts to Android keyboard */
+  min-height: -webkit-fill-available;
 }
 
 #root {
   min-height: 100vh;
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+/* Android WebView: prevent overscroll glow, improve touch */
+.platform-android {
+  -webkit-overflow-scrolling: touch;
+}
+
+.platform-android body {
+  overscroll-behavior: none;
 }

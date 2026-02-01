@@ -683,3 +683,69 @@ body {
     min-height: 40px;
   }
 }
+
+/* ========== Android (Capacitor native app) ========== */
+.platform-android {
+  /* Force mobile layout - Android app is always phone-sized */
+  --viewport-height: 100dvh;
+}
+
+.platform-android body {
+  /* Full viewport on Android WebView */
+  width: 100%;
+}
+
+.platform-android #root {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+/* Hide "Download Android app" when already in the Android app */
+.platform-android .android-download-wrap {
+  display: none !important;
+}
+
+/* Android: ensure full-height layouts work with system UI */
+.platform-android .notes-layout {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+}
+
+.platform-android .notes-content {
+  flex: 1;
+  min-height: 0;
+}
+
+.platform-android .notes-main {
+  min-height: 0;
+  flex: 1;
+}
+
+.platform-android .note-editor {
+  min-height: 0;
+}
+
+.platform-android .note-editor-content {
+  /* Allow editor to shrink when keyboard opens */
+  min-height: 150px;
+}
+
+/* Android: improve touch feedback, remove tap highlight */
+.platform-android .btn,
+.platform-android .note-list-item,
+.platform-android .android-download,
+.platform-android .notes-back-btn {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+/* Android: auth page fills viewport */
+.platform-android .auth-page {
+  min-height: 100dvh;
+  min-height: -webkit-fill-available;
+  padding: env(safe-area-inset-top, 1rem) env(safe-area-inset-right, 1rem) env(safe-area-inset-bottom, 1rem) env(safe-area-inset-left, 1rem);
+}
+
+.platform-android .auth-card {
+  max-width: 100%;
+}
