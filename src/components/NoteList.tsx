@@ -1,13 +1,26 @@
-import type { Note } from '../types/database';
+import type { Note, SortOption } from '../types/database';
 
 interface NoteListProps {
   notes: Note[];
   selectedNote: Note | null;
   onSelectNote: (note: Note) => void;
   isCreating: boolean;
+  searchQuery: string;
+  onSearchChange: (value: string) => void;
+  sortBy: SortOption;
+  onSortChange: (value: SortOption) => void;
 }
 
-export function NoteList({ notes, selectedNote, onSelectNote, isCreating }: NoteListProps) {
+export function NoteList({
+  notes,
+  selectedNote,
+  onSelectNote,
+  isCreating,
+  searchQuery,
+  onSearchChange,
+  sortBy,
+  onSortChange,
+}: NoteListProps) {
   function formatDate(dateStr: string) {
     const date = new Date(dateStr);
     const now = new Date();
@@ -22,8 +35,45 @@ export function NoteList({ notes, selectedNote, onSelectNote, isCreating }: Note
 
   return (
     <div className="note-list">
+      <div className="note-list-toolbar">
+        <div className="note-search-wrap">
+          <svg
+            className="note-search-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            aria-hidden
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.35-4.35" />
+          </svg>
+          <input
+            type="search"
+            placeholder="Search notes..."
+            value={searchQuery}
+            onChange={(e) => onSearchChange(e.target.value)}
+            className="note-search-input"
+            aria-label="Search notes"
+          />
+        </div>
+        <select
+          value={sortBy}
+          onChange={(e) => onSortChange(e.target.value as SortOption)}
+          className="note-sort-select"
+          aria-label="Sort notes"
+        >
+          <option value="newest">Newest first</option>
+          <option value="oldest">Oldest first</option>
+          <option value="title-asc">Title A–Z</option>
+          <option value="title-desc">Title Z–A</option>
+        </select>
+      </div>
+      <div className="note-list-content">
       {notes.length === 0 && !isCreating ? (
-        <p className="note-list-empty">No notes yet</p>
+        <p className="note-list-empty">
+          {searchQuery.trim() ? 'No notes match your search' : 'No notes yet'}
+        </p>
       ) : (
         notes.map((note) => (
           <button
@@ -36,6 +86,7 @@ export function NoteList({ notes, selectedNote, onSelectNote, isCreating }: Note
           </button>
         ))
       )}
+      </div>
     </div>
   );
 }

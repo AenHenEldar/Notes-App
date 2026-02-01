@@ -4,13 +4,15 @@ import { useNotes } from '../hooks/useNotes';
 import { NoteEditor } from '../components/NoteEditor';
 import { NoteList } from '../components/NoteList';
 import { AndroidDownload } from '../components/AndroidDownload';
-import type { Note } from '../types/database';
+import type { Note, SortOption } from '../types/database';
 
 export function Notes() {
   const { signOut } = useAuth();
   const { notes, loading, error, createNote, updateNote, deleteNote } = useNotes();
   const [selectedNote, setSelectedNote] = useState<Note | null>(null);
   const [isCreating, setIsCreating] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortOption>('newest');
 
   async function handleSave(title: string, content: string) {
     if (isCreating) {
@@ -70,6 +72,30 @@ export function Notes() {
 
   const showEditor = isCreating || !!selectedNote;
 
+  const filteredNotes = notes
+    .filter((note) => {
+      if (!searchQuery.trim()) return true;
+      const q = searchQuery.toLowerCase().trim();
+      return (
+        (note.title || '').toLowerCase().includes(q) ||
+        (note.content || '').toLowerCase().includes(q)
+      );
+    })
+    .sort((a, b) => {
+      switch (sortBy) {
+        case 'newest':
+          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
+        case 'oldest':
+          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+        case 'title-asc':
+          return (a.title || 'Untitled').localeCompare(b.title || 'Untitled', undefined, { sensitivity: 'base' });
+        case 'title-desc':
+          return (b.title || 'Untitled').localeCompare(a.title || 'Untitled', undefined, { sensitivity: 'base' });
+        default:
+          return 0;
+      }
+    });
+
   function handleBackToList() {
     setIsCreating(false);
     setSelectedNote(null);
@@ -104,10 +130,14 @@ export function Notes() {
       <div className={`notes-content ${showEditor ? 'show-editor' : ''}`}>
         <aside className="notes-sidebar">
           <NoteList
-            notes={notes}
+            notes={filteredNotes}
             selectedNote={selectedNote}
             onSelectNote={handleSelectNote}
             isCreating={isCreating}
+            searchQuery={searchQuery}
+            onSearchChange={setSearchQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
           />
         </aside>
 
