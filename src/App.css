@@ -111,6 +111,35 @@ body {
   text-decoration: underline;
 }
 
+.auth-android {
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Android download button */
+.android-download {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  text-decoration: none;
+  border-radius: var(--radius);
+  transition: all 0.15s ease;
+}
+
+.android-download:hover {
+  color: var(--accent);
+  background: rgba(99, 102, 241, 0.1);
+}
+
+.android-download-icon {
+  width: 20px;
+  height: 20px;
+}
+
 /* Buttons */
 .btn {
   padding: 0.625rem 1.25rem;

@@ -3,6 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useNotes } from '../hooks/useNotes';
 import { NoteEditor } from '../components/NoteEditor';
 import { NoteList } from '../components/NoteList';
+import { AndroidDownload } from '../components/AndroidDownload';
 import type { Note } from '../types/database';
 
 export function Notes() {
@@ -72,6 +73,7 @@ export function Notes() {
       <header className="notes-header">
         <h1>Notes</h1>
         <div className="header-actions">
+          <AndroidDownload />
           <button onClick={handleNewNote} className="btn btn-primary">
             + New note
           </button>

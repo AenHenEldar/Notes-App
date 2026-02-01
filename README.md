@@ -87,6 +87,15 @@ npm run open:android
 
 In Android Studio: **Build** → **Generate Signed Bundle / APK** → choose **Android App Bundle** (AAB) for Play Store submission.
 
+### APK download button (web)
+
+To enable the "Download Android app" button on the website:
+
+1. Build a release APK in Android Studio: **Build** → **Build Bundle(s) / APK(s)** → **Build APK(s)**
+2. Copy the APK from `android/app/build/outputs/apk/release/app-release-unsigned.apk` (or the signed APK path)
+3. Rename it to `notes-app.apk` and place it in the `public/` folder
+4. Rebuild and deploy the web app — the button will serve the APK at `/notes-app.apk`
+
 ## Tech Stack
 
 - **React 19** with TypeScript

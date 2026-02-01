@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { AndroidDownload } from '../components/AndroidDownload';
 
 export function Signup() {
   const [email, setEmail] = useState('');
@@ -62,6 +63,9 @@ export function Signup() {
         <p className="auth-footer">
           Already have an account? <Link to="/login">Sign in</Link>
         </p>
+        <div className="auth-android">
+          <AndroidDownload />
+        </div>
       </div>
     </div>
   );
