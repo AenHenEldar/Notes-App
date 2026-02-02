@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import { useNotes } from '../hooks/useNotes';
+import { toLocalDateStr, dateStrToSortKey, getNoteCalendarDateStr } from '../utils/date';
 import { NoteEditor } from '../components/NoteEditor';
 import { NoteList } from '../components/NoteList';
-import { AndroidDownload } from '../components/AndroidDownload';
-import type { Note, SortOption } from '../types/database';
+import { NotesCalendar } from '../components/NotesCalendar';
+import type { Note, SortOption, DateFilterOption } from '../types/database';
 
 export function Notes() {
   const { signOut } = useAuth();
@@ -13,12 +14,19 @@ export function Notes() {
   const [isCreating, setIsCreating] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<SortOption>('newest');
+  const [dateFilter, setDateFilter] = useState<DateFilterOption>('all');
+  const [specificFilterDate, setSpecificFilterDate] = useState<string>(() =>
+    toLocalDateStr(new Date())
+  );
+  const [view, setView] = useState<'list' | 'calendar'>('list');
+  const [selectedDate, setSelectedDate] = useState<Date | null>(null);
 
   async function handleSave(title: string, content: string) {
     if (isCreating) {
-      await createNote(title, content);
+      await createNote(title, content, selectedDate ?? undefined);
       setIsCreating(false);
       setSelectedNote(null);
+      setSelectedDate(null);
     } else if (selectedNote) {
       await updateNote(selectedNote.id, title, content);
       setSelectedNote({ ...selectedNote, title, content, updated_at: new Date().toISOString() });
@@ -33,6 +41,13 @@ export function Notes() {
   }
 
   function handleNewNote() {
+    setIsCreating(true);
+    setSelectedNote(null);
+    setSelectedDate(null);
+  }
+
+  function handleSelectDate(date: Date) {
+    setSelectedDate(date);
     setIsCreating(true);
     setSelectedNote(null);
   }
@@ -72,7 +87,46 @@ export function Notes() {
 
   const showEditor = isCreating || !!selectedNote;
 
-  const filteredNotes = notes
+  function getNoteCalendarDate(note: Note): Date {
+    if (note.note_date) {
+      return new Date(note.note_date + 'T12:00:00');
+    }
+    return new Date(note.created_at);
+  }
+
+  function isNoteInDateRange(note: Note): boolean {
+    if (dateFilter === 'all') return true;
+    const noteDate = getNoteCalendarDate(note);
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    const todayEnd = new Date(todayStart.getTime() + 24 * 60 * 60 * 1000 - 1);
+    const yesterdayStart = new Date(todayStart.getTime() - 24 * 60 * 60 * 1000);
+
+    switch (dateFilter) {
+      case 'today':
+        return noteDate >= todayStart && noteDate <= todayEnd;
+      case 'yesterday':
+        return noteDate >= yesterdayStart && noteDate < todayStart;
+      case 'last7':
+        return noteDate >= new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      case 'last30':
+        return noteDate >= new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+      case 'thisMonth':
+        return noteDate.getMonth() === now.getMonth() && noteDate.getFullYear() === now.getFullYear();
+      case 'specific': {
+        const target = new Date(specificFilterDate);
+        const targetStart = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+        const targetEnd = new Date(targetStart.getTime() + 24 * 60 * 60 * 1000 - 1);
+        return noteDate >= targetStart && noteDate <= targetEnd;
+      }
+      default:
+        return true;
+    }
+  }
+
+  const dateFilteredNotes = notes.filter(isNoteInDateRange);
+
+  const filteredNotes = dateFilteredNotes
     .filter((note) => {
       if (!searchQuery.trim()) return true;
       const q = searchQuery.toLowerCase().trim();
@@ -83,10 +137,16 @@ export function Notes() {
     })
     .sort((a, b) => {
       switch (sortBy) {
-        case 'newest':
-          return new Date(b.updated_at).getTime() - new Date(a.updated_at).getTime();
-        case 'oldest':
-          return new Date(a.updated_at).getTime() - new Date(b.updated_at).getTime();
+        case 'newest': {
+          const keyA = dateStrToSortKey(getNoteCalendarDateStr(a));
+          const keyB = dateStrToSortKey(getNoteCalendarDateStr(b));
+          return keyA - keyB;
+        }
+        case 'oldest': {
+          const keyA = dateStrToSortKey(getNoteCalendarDateStr(a));
+          const keyB = dateStrToSortKey(getNoteCalendarDateStr(b));
+          return keyB - keyA;
+        }
         case 'title-asc':
           return (a.title || 'Untitled').localeCompare(b.title || 'Untitled', undefined, { sensitivity: 'base' });
         case 'title-desc':
@@ -99,6 +159,7 @@ export function Notes() {
   function handleBackToList() {
     setIsCreating(false);
     setSelectedNote(null);
+    setSelectedDate(null);
   }
 
   return (
@@ -117,7 +178,22 @@ export function Notes() {
         )}
         <h1>Notes</h1>
         <div className="header-actions">
-          <AndroidDownload />
+          <div className="view-toggle">
+            <button
+              type="button"
+              className={`btn btn-ghost btn-sm ${view === 'list' ? 'active' : ''}`}
+              onClick={() => setView('list')}
+            >
+              List
+            </button>
+            <button
+              type="button"
+              className={`btn btn-ghost btn-sm ${view === 'calendar' ? 'active' : ''}`}
+              onClick={() => setView('calendar')}
+            >
+              Calendar
+            </button>
+          </div>
           <button onClick={handleNewNote} className="btn btn-primary">
             + New note
           </button>
@@ -129,7 +205,37 @@ export function Notes() {
 
       <div className={`notes-content ${showEditor ? 'show-editor' : ''}`}>
         <aside className="notes-sidebar">
-          <NoteList
+          {view === 'calendar' ? (
+            <>
+              <div className="calendar-filter-bar">
+                <select
+                  value={dateFilter}
+                  onChange={(e) => setDateFilter(e.target.value as DateFilterOption)}
+                  className="note-sort-select"
+                  aria-label="Filter by date"
+                >
+                  <option value="all">All dates</option>
+                  <option value="today">Today</option>
+                  <option value="yesterday">Yesterday</option>
+                  <option value="last7">Last 7 days</option>
+                  <option value="last30">Last 30 days</option>
+                  <option value="thisMonth">This month</option>
+                  <option value="specific">Specific date</option>
+                </select>
+                {dateFilter === 'specific' && (
+                  <input
+                    type="date"
+                    value={specificFilterDate}
+                    onChange={(e) => setSpecificFilterDate(e.target.value)}
+                    className="note-date-input"
+                    aria-label="Pick date"
+                  />
+                )}
+              </div>
+              <NotesCalendar notes={dateFilteredNotes} onSelectDate={handleSelectDate} />
+            </>
+          ) : (
+            <NoteList
             notes={filteredNotes}
             selectedNote={selectedNote}
             onSelectNote={handleSelectNote}
@@ -138,19 +244,34 @@ export function Notes() {
             onSearchChange={setSearchQuery}
             sortBy={sortBy}
             onSortChange={setSortBy}
+            dateFilter={dateFilter}
+            onDateFilterChange={setDateFilter}
+            specificFilterDate={specificFilterDate}
+            onSpecificFilterDateChange={setSpecificFilterDate}
           />
+          )}
         </aside>
 
         <main className="notes-main">
           {isCreating ? (
-            <NoteEditor
-              title=""
-              content=""
-              onSave={handleSave}
-              onDelete={handleDelete}
-              onCancel={() => setIsCreating(false)}
-              isNew
-            />
+            <>
+              {selectedDate && (
+                <p className="note-date-hint">
+                  Creating note for {selectedDate.toLocaleDateString()}
+                </p>
+              )}
+              <NoteEditor
+                title=""
+                content=""
+                onSave={handleSave}
+                onDelete={handleDelete}
+                onCancel={() => {
+                  setIsCreating(false);
+                  setSelectedDate(null);
+                }}
+                isNew
+              />
+            </>
           ) : selectedNote ? (
             <NoteEditor
               key={selectedNote.id}
@@ -161,7 +282,14 @@ export function Notes() {
             />
           ) : (
             <div className="notes-empty">
-              <p>Select a note or create a new one</p>
+              <p>
+                {selectedDate
+                  ? `Create note for ${selectedDate.toLocaleDateString()}`
+                  : 'Select a note or create a new one'}
+              </p>
+              {selectedDate && (
+                <p className="notes-empty-hint">Fill in the editor above and click Save</p>
+              )}
             </div>
           )}
         </main>

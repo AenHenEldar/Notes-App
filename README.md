@@ -42,6 +42,8 @@ VITE_SUPABASE_ANON_KEY=your-anon-key
 
 In your Supabase dashboard, go to **SQL Editor** and run the contents of `supabase-setup.sql`. This creates the `notes` table with Row Level Security (RLS).
 
+**Existing installations:** If you already have the notes table, run `supabase-migration-note-date.sql` to add the `note_date` column for calendar date filtering.
+
 ### 5. Configure Supabase Auth (optional)
 
 By default, Supabase requires email confirmation. For local development, you can disable this in **Authentication** → **Providers** → **Email** → turn off "Confirm email".

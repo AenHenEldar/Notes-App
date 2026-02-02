@@ -7,9 +7,12 @@ create table public.notes (
   user_id uuid references auth.users(id) on delete cascade not null,
   title text default 'Untitled Note',
   content text default '',
+  note_date date,
   created_at timestamptz default now(),
   updated_at timestamptz default now()
 );
+
+-- For existing installations, run: alter table public.notes add column if not exists note_date date;
 
 -- Enable Row Level Security (RLS)
 alter table public.notes enable row level security;
